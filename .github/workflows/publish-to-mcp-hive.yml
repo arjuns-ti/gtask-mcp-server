@@ -96,7 +96,7 @@ jobs:
         run: |
           ZIP_PATH="../gtasks-mcp-server.zip"
           CONFIG_JSON=$(jq -c '.' custom_payload.json)
-          curl -sS -X POST "$MCP_SERVER_URL/inspect-zip" \
+          curl -sS -X POST "$MCP_SERVER_URL/api/hives/from-mcp-server" \
             -H "x-api-key: $API_KEY" \
             -F "zipFile=@${ZIP_PATH};type=application/zip" \
             --form-string "data=${CONFIG_JSON}"

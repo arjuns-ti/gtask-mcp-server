@@ -51,7 +51,7 @@ echo "Setup complete" >&2
 cat << EOF
 {
   "command": "uv",
-  "args": ["run", "mcp", "dev", "src/main.py"],
+  "args": ["run", "src/main.py"],
   "env": {
     "GOOGLE_CLIENT_CONFIG": "./credentials/client_secrets.json",
     "GOOGLE_TOKEN_FILE": "./token.json"
