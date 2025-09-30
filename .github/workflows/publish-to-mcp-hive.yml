@@ -77,7 +77,7 @@ jobs:
 
       - name: Create ZIP for MCP Hive
         run: |
-          ZIP_PATH="../gchat-mcp-server.zip"
+          ZIP_PATH="../gtasks-mcp-server.zip"
           zip -r "$ZIP_PATH" . \
             -x "*.git*" \
             "*/__pycache__/*" \
