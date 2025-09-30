@@ -13,14 +13,14 @@ class Settings(BaseSettings):
     """Settings for the Task MCP Server"""
 
     #Google Cloud Config
-    google_client_config_path: str = Field(
+    google_client_config: str = Field(
         "credentials/client_secrets.json",
-        description="The path to store OAuth credentials"
+        description="The path to store OAuth credentials",
     )
 
-    google_token_file_path: str = Field(
-        "token.json",
-        description="The path to store OAuth credentials"
+    google_token_file: str = Field(
+        ".gcp-saved-tokens.json",
+        description="The path to store OAuth credentials",
     )
 
     google_oauth_port: int = Field(
@@ -49,11 +49,11 @@ class Settings(BaseSettings):
 
     def get_client_config_path(self) -> str:
         """Get the client config path"""
-        return Path(self.google_client_config_path)
+        return Path(self.google_client_config)
 
     def get_token_file_path(self) -> str:
         """Get the token file path"""
-        return Path(self.google_token_file_path)
+        return Path(self.google_token_file)
 
 def get_settings() -> Settings:
     """Get application settings"""
