@@ -30,14 +30,6 @@ def get_task_client() -> TaskClient:
     return _task_client
 
 @mcp.tool()
-def say_hello(name: str):
-    """Say hello to the user"""
-    logger.debug(f"Saying hello to {name}")
-    return {
-        "result": f"Hello {name}!",
-    }
-
-@mcp.tool()
 def list_tasklists():
     """Get all task lists"""
     logger.debug("Listing task lists")
