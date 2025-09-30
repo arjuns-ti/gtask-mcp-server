@@ -61,7 +61,7 @@ jobs:
                     "authorizationUrl": "https://accounts.google.com/o/oauth2/v2/auth",
                     "tokenUrl": "https://oauth2.googleapis.com/token",
                     "scopes": {
-                      "https://www.googleapis.com/auth/tasks": "Read/Write Google Tasks",
+                      "https://www.googleapis.com/auth/tasks": "Read/Write Google Tasks"
                     }
                   }
                 }
