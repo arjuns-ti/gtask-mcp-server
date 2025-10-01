@@ -29,9 +29,10 @@ def get_task_client() -> TaskClient:
         )
     return _task_client
 
-@mcp.resource("tasks://datetime")
-def datetime_resource():
+@mcp.toll()
+def get_current_datetime():
     """Get the current date and time in GMT+5:30"""
+    logger.debug("Getting current date and time")
     return datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=5, minutes=30))).isoformat()
 
 @mcp.tool()
