@@ -2,7 +2,7 @@
 
 import logging
 from typing import Any
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from mcp.server.fastmcp import FastMCP  # pyright: ignore[reportMissingImports]
 
@@ -28,6 +28,11 @@ def get_task_client() -> TaskClient:
             scopes=_settings.google_task_api_scopes,
         )
     return _task_client
+
+@mcp.resource("tasks://datetime")
+def datetime_resource():
+    """Get the current date and time in GMT+5:30"""
+    return datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=5, minutes=30))).isoformat()
 
 @mcp.tool()
 def list_tasklists():
