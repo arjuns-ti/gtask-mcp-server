@@ -115,5 +115,13 @@ def complete_task(tasklist_id: str, task_id: str):
     logger.debug(f"Task completed: {ret}")
     return ret
 
+@mcp.tool()
+def move_task(tasklist_id: str, task_id: str, new_tasklist_id: str):
+    """Move a task to a different task list"""
+    logger.debug(f"Moving task: {task_id} to {new_tasklist_id}")
+    ret = get_task_client().task_move(tasklist_id, task_id, new_tasklist_id)
+    logger.debug(f"Task moved: {ret}")
+    return ret
+
 if __name__ == "__main__":
     mcp.run(transport="stdio")

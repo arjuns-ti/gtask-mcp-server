@@ -111,3 +111,15 @@ class TaskClient:
         current_task['completed'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         ret = self.service.tasks().update(tasklist=tasklist_id, task=task_id, body=current_task).execute()
         return ret
+
+    def task_move(self, tasklist_id: str, task_id: str, new_tasklist_id: str) -> dict[str, Any]:
+        """Move a task to a different task list."""
+        # First get the current task
+        current_task = self.service.tasks().get(tasklist=tasklist_id, task=task_id).execute()
+        # Create a copy in the new tasklist
+        notes = current_task['notes'] if 'notes' in current_task else None
+        due = current_task['due'] if 'due' in current_task else None
+        ret = self.task_add(new_tasklist_id, current_task['title'], notes, due)
+        # Delete the original task
+        self.task_delete(tasklist_id, task_id)
+        return ret
