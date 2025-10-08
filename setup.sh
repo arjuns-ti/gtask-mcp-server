@@ -28,9 +28,10 @@ if [ -n "$API_KEY" ] && [ -n "$API_BASE_URL" ] && [ -n "$HIVE_INSTANCE_ID" ]; th
           "refresh_token": .credentials.refresh_token,
           "token": .credentials.access_token,
           "type": "authorized_user"
-        }' oauth_response.json > token.json
+        }' oauth_response.json > ./.gcp-saved-tokens.json
         
         # Create client secrets in Google OAuth format  
+        mkdir -p ./credentials
         jq '{"web": .oauthKeys}' oauth_response.json > credentials/client_secrets.json
 
         echo "OAuth2 credentials configured successfully" >&2
@@ -54,7 +55,7 @@ cat << EOF
   "args": ["run", "src/main.py"],
   "env": {
     "GOOGLE_CLIENT_CONFIG": "./credentials/client_secrets.json",
-    "GOOGLE_TOKEN_FILE": "./token.json"
+    "GOOGLE_TOKEN_FILE": "./.gcp-saved-tokens.json"
   },
   "cwd": "$(pwd)"
 }
