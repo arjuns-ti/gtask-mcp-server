@@ -5,10 +5,34 @@ from typing import Annotated, Any
 from datetime import datetime, timedelta, timezone
 
 from mcp.server.fastmcp import FastMCP  # pyright: ignore[reportMissingImports]
-from pydantic import Field
+from pydantic import Field  # pyright: ignore[reportMissingImports]
 
 from task_client import TaskClient
 from config import get_settings, Settings
+
+def parse_task(task: dict[str, Any]) -> dict[str, Any]:
+    # Only keep the useful fields in tasks
+    t = {
+        "task_id": task["id"],
+        "title": task["title"],
+        "status": task["status"],
+    }
+
+    # optional fields
+    if "notes" in task:
+        t["description"] = task["notes"]
+    if "due" in task:
+        t["due"] = task["due"]
+    return t
+
+def parse_tasklist(tasklist: dict[str, Any]) -> dict[str, Any]:
+    # Only keep the useful fields in tasklists
+    t = {
+        "tasklist_id": tasklist["id"],
+        "title": tasklist["title"],
+    }
+
+    return t
 
 logger = logging.getLogger(__name__)
 mcp = FastMCP("gtask-mcp-server")
@@ -46,7 +70,7 @@ def list_tasklists():
     logger.debug("Listing task lists")
     lists = get_task_client().tl_list()
     logger.debug(f"Lists: {lists}")
-    return lists
+    return [parse_tasklist(tasklist) for tasklist in lists]
 
 @mcp.tool()
 def add_tasklist(title: Annotated[str, Field(description="The title/name for the new task list")]):
@@ -54,7 +78,7 @@ def add_tasklist(title: Annotated[str, Field(description="The title/name for the
     logger.debug(f"Adding task list: {title}")
     ret = get_task_client().tl_add(title)
     logger.debug(f"Task list added: {ret}")
-    return ret
+    return parse_tasklist(ret)
 
 @mcp.tool()
 def delete_tasklist(tasklist_id: Annotated[str, Field(description="The unique identifier of the task list to delete")]):
@@ -73,7 +97,7 @@ def update_tasklist(
     logger.debug(f"Updating task list: {tasklist_id}")
     ret = get_task_client().tl_update(tasklist_id, title)
     logger.debug(f"Task list updated: {ret}")
-    return ret
+    return parse_tasklist(ret)
 
 @mcp.tool()
 def list_tasks(tasklist_id: Annotated[str, Field(description="The unique identifier of the task list to retrieve tasks from")]):
@@ -81,7 +105,7 @@ def list_tasks(tasklist_id: Annotated[str, Field(description="The unique identif
     logger.debug(f"Listing tasks: {tasklist_id}")
     tasks = get_task_client().task_list(tasklist_id)
     logger.debug(f"Tasks: {tasks}")
-    return tasks
+    return [parse_task(task) for task in tasks]
 
 @mcp.tool()
 def add_task(
@@ -100,7 +124,7 @@ def add_task(
         due = datetime.strptime(due_date, "%d/%m/%Y").strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     ret = get_task_client().task_add(tasklist_id, title, description, due)
     logger.debug(f"Task added: {ret}")
-    return ret
+    return parse_task(ret)
 
 @mcp.tool()
 def delete_task(
@@ -129,7 +153,7 @@ def update_task(
         due = datetime.strptime(due_date, "%d/%m/%Y").strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     ret = get_task_client().task_update(tasklist_id, task_id, title, description, due)
     logger.debug(f"Task updated: {ret}")
-    return ret
+    return parse_task(ret)
 
 @mcp.tool()
 def complete_task(
@@ -140,7 +164,7 @@ def complete_task(
     logger.debug(f"Completing task: {task_id}")
     ret = get_task_client().task_complete(tasklist_id, task_id)
     logger.debug(f"Task completed: {ret}")
-    return ret
+    return parse_task(ret)
 
 @mcp.tool()
 def move_task(
@@ -152,7 +176,7 @@ def move_task(
     logger.debug(f"Moving task: {task_id} to {new_tasklist_id}")
     ret = get_task_client().task_move(tasklist_id, task_id, new_tasklist_id)
     logger.debug(f"Task moved: {ret}")
-    return ret
+    return parse_task(ret)
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")
